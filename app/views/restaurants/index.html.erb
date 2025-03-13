@@ -1,0 +1,49 @@
+<div class="container mt-5">
+  <h1 class="text-center text-primary fw-bold">🍽️ Restaurant Collection</h1>
+  <p class="text-center text-muted">Discover and rate the best restaurants</p>
+  <hr class="mb-4">
+
+  <% if @restaurants.any? %>
+    <div class="row g-4">
+      <% @restaurants.each do |restaurant| %>
+        <div class="col-md-4">
+          <div class="card restaurant-card shadow-lg border-0">
+            <div class="card-body text-center">
+              <h5 class="card-title text-dark fw-bold"><%= restaurant.name %></h5>
+              <p class="card-text text-muted"><%= restaurant.location %></p>
+              
+              <!-- Rating Display -->
+              <div class="rating mt-2">
+                <% avg_rating = restaurant.average_rating || 0 %>
+                <% rating_count = restaurant.ratings.count %>
+                
+                <!-- Star Ratings -->
+                <div>
+                  <% 5.times do |i| %>
+                    <% if i < avg_rating %>
+                      <span class="text-warning fs-5">★</span>
+                    <% else %>
+                      <span class="text-secondary fs-5">☆</span>
+                    <% end %>
+                  <% end %>
+                </div>
+
+                <!-- Average Rating and Count -->
+                <p class="text-muted mt-2">
+                  <strong><%= avg_rating.round(1) %></strong> ⭐ | <%= rating_count %> ratings
+                </p>
+              </div>
+
+              <a href="<%= restaurant_path(restaurant) %>" class="btn btn-outline-primary mt-3">View Details</a>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-info text-center mt-4">
+      <h4>No restaurants available 🍽️</h4>
+      <p>Be the first to add a restaurant!</p>
+    </div>
+  <% end %>
+</div>

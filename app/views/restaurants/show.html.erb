@@ -1,0 +1,102 @@
+<div class="container mt-4">
+  <a href="<%= root_path %>" class="btn btn-secondary mb-3">⬅ Back to Restaurants</a>
+
+  <div class="card shadow-sm p-4 text-center">
+    <h2 class="text-primary"><%= @restaurant.name %></h2>
+    <h5 class="text-muted">Located at <%= @restaurant.location %></h5>
+
+    <hr>
+
+    <h4>📊 Average Rating: <span id="average-rating"><%= @restaurant.average_rating %></span> ⭐</h4>
+
+    <h3 class="mt-4">Rate this restaurant:</h3>
+    <div id="star-rating" data-restaurant-id="<%= @restaurant.id %>">
+      <% (1..5).each do |star| %>
+        <a href="#" class="star-link" data-value="<%= star %>">★</a>
+      <% end %>
+    </div>
+    
+    <p id="rating-message" class="text-danger mt-2"></p>
+
+    <button id="confirm-rating" class="btn btn-success mt-3" style="display: none;">Confirm Rating</button>
+  </div>
+</div>
+
+<style>
+  .star-link {
+    font-size: 50px;
+    text-decoration: none;
+    color: gray;
+    transition: color 0.2s ease-in-out;
+    cursor: pointer;
+  }
+
+  .star-link:hover,
+  .star-link.selected {
+    color: gold;
+  }
+
+  .card {
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const stars = document.querySelectorAll(".star-link");
+    const confirmButton = document.getElementById("confirm-rating");
+    const restaurantId = document.getElementById("star-rating").getAttribute("data-restaurant-id");
+    let selectedRating = 0; // Stores the selected rating
+
+    function highlightStars(rating) {
+      stars.forEach((star, index) => {
+        star.classList.toggle("selected", index < rating);
+      });
+    }
+
+    stars.forEach(star => {
+      star.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent default link action
+        selectedRating = this.getAttribute("data-value");
+        highlightStars(selectedRating);
+        confirmButton.style.display = "block"; // Show confirm button
+      });
+    });
+
+    confirmButton.addEventListener("click", function () {
+      if (selectedRating === 0) {
+        document.getElementById("rating-message").innerText = "⚠ Please select a rating!";
+        return;
+      }
+
+      console.log("🔄 Sending rating:", selectedRating);
+
+      fetch(`/restaurants/${restaurantId}/rate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").getAttribute("content")
+        },
+        body: JSON.stringify({ rating: selectedRating })
+      })
+      .then(response => {
+        console.log("🔄 Response received:", response);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("✅ Data received:", data);
+        document.getElementById("average-rating").innerText = data.average;
+        document.getElementById("rating-message").innerText = "⭐ Thank you for rating!";
+        confirmButton.style.display = "none"; // Hide button after submission
+      })
+      .catch(error => {
+        console.error("❌ Error:", error);
+        document.getElementById("rating-message").innerText = "❌ Error submitting rating. Please try again.";
+      });
+    });
+  });
+</script>
