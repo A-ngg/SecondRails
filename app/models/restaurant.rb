@@ -1,6 +1,6 @@
 class Restaurant < ApplicationRecord
     has_many :ratings, dependent: :destroy
-  
+
     def average_rating
       ratings.average(:stars).to_f.round(1) || 0
     end

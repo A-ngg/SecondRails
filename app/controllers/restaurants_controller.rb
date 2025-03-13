@@ -1,5 +1,5 @@
 class RestaurantsController < ApplicationController
-  before_action :authenticate_user!, only: [:rate]
+  before_action :authenticate_user!, only: [ :rate ]
 
   def rate
     @restaurant = Restaurant.find(params[:id])

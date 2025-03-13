@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
   resources :restaurants do
     member do
-      post 'rate', to: 'restaurants#rate'
+      post "rate", to: "restaurants#rate"
     end
   end
   root "restaurants#index"

@@ -1,44 +1,69 @@
-<div class="container mt-4">
-  <a href="<%= root_path %>" class="btn btn-secondary mb-3">⬅ Back to Restaurants</a>
+<div class="container mt-4"> 
+  <a href="<%= root_path %>" class="btn btn-outline-secondary mb-3">⬅ Back to Restaurants</a>
 
-  <div class="card shadow-sm p-4 text-center">
-    <h2 class="text-primary"><%= @restaurant.name %></h2>
-    <h5 class="text-muted">Located at <%= @restaurant.location %></h5>
+  <div class="card shadow-lg border-0 p-4 text-center restaurant-details">
+    <div class="card-body">
+      <h2 class="text-primary fw-bold"><%= @restaurant.name %></h2>
+      <h5 class="text-muted"><i class="bi bi-geo-alt-fill"></i> Located at <%= @restaurant.location %></h5>
+      
+      <div class="rating-display my-3">
+        <h4 class="fw-semibold">📊 Average Rating: <span id="average-rating" class="text-warning"><%= @restaurant.average_rating %></span> ⭐</h4>
+      </div>
 
-    <hr>
+      <hr>
 
-    <h4>📊 Average Rating: <span id="average-rating"><%= @restaurant.average_rating %></span> ⭐</h4>
+      <h3 class="mt-4 text-dark">Rate this restaurant:</h3>
+      <div id="star-rating" class="my-3" data-restaurant-id="<%= @restaurant.id %>">
+        <% (1..5).each do |star| %>
+          <a href="#" class="star-link fs-2 mx-1" data-value="<%= star %>">★</a>
+        <% end %>
+      </div>
+      
+      <p id="rating-message" class="text-danger mt-2"></p>
 
-    <h3 class="mt-4">Rate this restaurant:</h3>
-    <div id="star-rating" data-restaurant-id="<%= @restaurant.id %>">
-      <% (1..5).each do |star| %>
-        <a href="#" class="star-link" data-value="<%= star %>">★</a>
-      <% end %>
+      <button id="confirm-rating" class="btn btn-success rounded-pill px-4 mt-3" style="display: none;">
+        ✅ Confirm Rating
+      </button>
     </div>
-    
-    <p id="rating-message" class="text-danger mt-2"></p>
-
-    <button id="confirm-rating" class="btn btn-success mt-3" style="display: none;">Confirm Rating</button>
   </div>
 </div>
-
 <style>
+
+/* Added Soft Gradient and Shadow */
+  .restaurant-details {
+    border-radius: 15px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+    padding: 30px;
+    max-width: 600px;
+    margin: auto;
+  }
+
+  /* Star Rating Enhancement */
   .star-link {
-    font-size: 50px;
+    font-size: 40px;
     text-decoration: none;
     color: gray;
-    transition: color 0.2s ease-in-out;
+    transition: color 0.3s ease-in-out, transform 0.2s ease-in-out;
     cursor: pointer;
   }
 
   .star-link:hover,
   .star-link.selected {
     color: gold;
+    transform: scale(1.3);
   }
 
-  .card {
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  /* Animated Confirm Button */
+  .btn-success {
+    background: linear-gradient(135deg, #28a745, #218838);
+    border: none;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .btn-success:hover {
+    background: #ffc107;
+    transform: scale(1.05);
   }
 </style>
 
